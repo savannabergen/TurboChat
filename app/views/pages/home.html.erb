@@ -1,22 +1,28 @@
-<div class="card text-center">
-  <h1 class="card-title">Turbochat</h1>
-
-  <% if current_user %>
-    <div class="card-body">
-      <%= image_tag(current_user.avatar_thumbnail || asset_path('default_avatar.png'), alt: current_user.email) %>
-
-      <div class="btn-group mt-3" role="group">
-        <%= link_to "Start Chatting", rooms_path, class: "btn btn-primary" %>
-        <%= link_to "Edit Account", edit_user_registration_path, class: "btn btn-secondary" %>
-        <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger" %>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card" style="max-height: 80vh; overflow-y: auto;">
+        <img src="<%= asset_path('erd.png') %>" class="card-img-top" alt="Entity-Relationship Diagram">
+        <div class="card-body">
+          <h5 class="card-title">Entity-Relationship Diagram</h5>
+          <p class="card-text">This database schema defines a robust foundation for a multi-user chat application. At its core, the schema consists of four primary entities: Users, Rooms, Messages, and Participants. Users can create accounts and join multiple Rooms, which can be either public or private. Within these Rooms, users can exchange Messages, which are stored along with their corresponding user and room associations. The Participants table facilitates the many-to-many relationship between Users and Rooms. Additionally, the schema integrates Active Storage for file attachments, enabling users to share files within the chat. The design prioritizes scalability, flexibility, and data integrity, making it an ideal starting point for developing a feature-rich chat application.</p>
+          <p class="card-text">It imports user data from a CSV file (MOCK_DATA.csv), creating users with emails, passwords, and avatars. Additionally, it creates two default users: an admin and a normal user, both with generated avatars. The script then generates 20 chat rooms with random names and assigns each user to 3 random rooms. Finally, it creates 50 messages per user in each assigned room, using Faker to generate paragraph-long message bodies. This seed file ensures a populated database for development, testing, and demonstration purposes.</p>
+          </div>
       </div>
     </div>
-  <% else %>
-    <div class="card-body">
-      <div class="btn-group mt-3" role="group">
-        <%= link_to "Login", new_user_session_path, class: "btn btn-primary" %>
-        <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="modal fade" id="erdModal" tabindex="-1" aria-labelledby="erdModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="erdModalLabel">Entity-Relationship Diagram</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img src="<%= asset_path('erd.png') %>" class="img-fluid" alt="Entity-Relationship Diagram">
       </div>
     </div>
-  <% end %>
+  </div>
 </div>
