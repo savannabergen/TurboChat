@@ -38,15 +38,8 @@ CSV.foreach(csv_file_path, headers: true) do |row|
     admin_avatar_io = URI.open(admin_avatar_url)
     admin_user.avatar.attach(io: admin_avatar_io, filename: admin_avatar_url.split('/').last)
 
-    normal_user = User.create!(
-    email: 'user@example.com',
-    password: 'password',
-    password_confirmation: 'password'
-    )
-
     normal_avatar_url = Faker::Avatar.image
     normal_avatar_io = URI.open(normal_avatar_url)
-    normal_user.avatar.attach(io: normal_avatar_io, filename: normal_avatar_url.split('/').last)
 
     20.times do
     room = Room.find_or_create_by!(name: Faker::Hacker.adjective)
