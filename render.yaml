@@ -1,3 +1,4 @@
+Here's the render.yaml file again:
 services:
   - type: web
     name: socialsite
@@ -7,10 +8,8 @@ services:
     envVars:
       - key: RAILS_ENV
         value: production
-    databases:
-      - mydatabase
 
 databases:
   - name: socialdb
-    databaseType: postgresql
+    type: postgresql
 
