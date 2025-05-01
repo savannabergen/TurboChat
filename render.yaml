@@ -1,15 +1,19 @@
-Here's the render.yaml file again:
+databases:
+  - name: socialsite
+    databaseName: socialsite
+    user: socialsite
+
 services:
   - type: web
     name: socialsite
     runtime: ruby
-    buildCommand: bundle install
-    startCommand: rails s
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
-      - key: RAILS_ENV
-        value: production
-
-databases:
-  - name: socialdb
-    type: postgresql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: socialsite
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
 
