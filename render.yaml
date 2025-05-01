@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: socialsite
+    runtime: ruby
+    buildCommand: bundle install
+    startCommand: rails s
+    envVars:
+      - key: RAILS_ENV
+        value: production
+    databases:
+      - mydatabase
+
+databases:
+  - name: socialdb
+    databaseType: postgresql
+
