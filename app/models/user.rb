@@ -1,32 +1,26 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
   scope :all_except, ->(user) { where.not(id: user) }
-  after_create_commit { broadcast_append_to "users" }
+  after_create_commit :notify_clients
   has_many :messages, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
-
-  after_commit :add_default_avatar, on: %i[create update]
+  after_commit :attach_default_avatar, on: %i[create update]
 
   def avatar_thumbnail
-    avatar.variant(resize_to_limit: [ 150, 150 ]).processed
+    avatar.variant(resize_to_limit: [150, 150]).processed
   end
 
   def chat_avatar
-    avatar.attached? ? avatar.variant(resize_to_limit: [ 50, 50 ]).processed : "default_profile.jpg"
+    avatar.attached? ? avatar.variant(resize_to_limit: [50, 50]).processed : AvatarService.default_avatar_url
   end
 
   private
 
-  def add_default_avatar
-    return if avatar.attached?
+  def attach_default_avatar
+    AvatarService.attach_default_avatar(self)
+  end
 
-    avatar.attach(
-      io: File.open(Rails.root.join("app", "assets", "images", "default_profile.jpg")),
-      filename: "default_profile.jpg",
-      content_type: "image/jpg"
-    )
+  def notify_clients
+    $redis.publish("users", { user: self }.to_json)
   end
 end

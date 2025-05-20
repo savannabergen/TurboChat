@@ -1,26 +1,33 @@
 class RoomsController < ApplicationController
-  before_action :authenticate_user!
-  def index
-    @room = Room.new
-    @rooms = Room.public_rooms
+  before_action :set_room, only: [:show]
 
-    @users = User.all_except(current_user)
-    render "index"
+  def index
+    rooms = Room.all
+    render json: rooms, status: :ok
   end
 
   def show
-    @single_room = Room.find(params[:id])
-    @room = Room.new
-    @rooms = Room.public_rooms
-
-    @message = Message.new
-    @messages = @single_room.messages.order(created_at: :asc)
-
-    @users = User.all_except(current_user)
-    render "index"
+    render json: @room, status: :ok
   end
 
   def create
-    @room = Room.create(name: params["room"]["name"])
+    room = Room.new(room_params)
+    if room.save
+      render json: room, status: :created
+    else
+      render json: { errors: room.errors }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_room
+    @room = Room.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Room not found" }, status: :not_found
+  end
+
+  def room_params
+    params.require(:room).permit(:name, :is_private)
   end
 end

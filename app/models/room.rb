@@ -1,12 +1,15 @@
 class Room < ApplicationRecord
   validates_uniqueness_of :name
+
   scope :public_rooms, -> { where(is_private: false) }
-  after_create_commit { broadcast_if_public }
+
+  after_create_commit :notify_clients
+
   has_many :messages, dependent: :destroy
   has_many :participants, dependent: :destroy
 
-  def broadcast_if_public
-    broadcast_append_to "rooms" unless is_private
+  def notify_clients
+    $redis.publish("rooms", { room: self }.to_json) unless is_private
   end
 
   def self.create_private_room(users, room_name)
@@ -18,6 +21,7 @@ class Room < ApplicationRecord
   end
 
   def participant?(room, user)
-    room.participants.where(user: user).exists?
+    # This method seems to be incorrectly defined, it should probably be an instance method without the room argument
+    participants.where(user: user).exists?
   end
 end
