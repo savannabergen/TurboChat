@@ -22,8 +22,11 @@ module TurboChat
   class Application < Rails::Application
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins %r{https://[a-zA-Z0-9-]+\.savannagrace\.dev}
-        resource "*", headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head], credentials: true
+        origins %r{https://[a-zA-Z0-9-]+\.savannagrace\.dev}, 'http://localhost:3000'
+        resource "*",
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          credentials: true
       end
     end
   end
