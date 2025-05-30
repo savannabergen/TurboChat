@@ -1,5 +1,5 @@
 class RoomsController < ApplicationController
-  before_action :set_room, only: [:show]
+  before_action :set_room, only: [:show, :participants]
 
   def index
     rooms = Room.all
@@ -29,5 +29,10 @@ class RoomsController < ApplicationController
 
   def room_params
     params.require(:room).permit(:name, :is_private)
+  end
+
+  def participants
+    participants = @room.participants
+    render json: participants, status: :ok
   end
 end
