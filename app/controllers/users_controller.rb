@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user!, except: [:index]
   before_action :set_user, only: [:show]
 
   def index
@@ -18,3 +19,4 @@ class UsersController < ApplicationController
     render json: { error: "User not found" }, status: :not_found
   end
 end
+

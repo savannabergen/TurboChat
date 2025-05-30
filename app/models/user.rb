@@ -1,10 +1,13 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
+
   scope :all_except, ->(user) { where.not(id: user) }
+
   after_create_commit :notify_clients
+  after_commit :attach_default_avatar, on: :create
+
   has_many :messages, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
-  after_commit :attach_default_avatar, on: %i[create update]
 
   def avatar_thumbnail
     avatar.variant(resize_to_limit: [150, 150]).processed
@@ -17,10 +20,10 @@ class User < ApplicationRecord
   private
 
   def attach_default_avatar
-    AvatarService.attach_default_avatar(self)
+    AvatarService.attach_default_avatar(self) unless avatar.attached?
   end
 
   def notify_clients
-    $redis.publish("users", { user: self }.to_json)
+    NotifyClientsJob.perform_later(self)
   end
 end
