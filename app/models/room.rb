@@ -1,10 +1,8 @@
 class Room < ApplicationRecord
   validates_uniqueness_of :name
-
   scope :public_rooms, -> { where(is_private: false) }
-
   after_create_commit :notify_clients
-
+  after_create_commit :add_participants
   has_many :messages, dependent: :destroy
   has_many :participants, dependent: :destroy
 
@@ -20,8 +18,15 @@ class Room < ApplicationRecord
     single_room
   end
 
-  def participant?(room, user)
-    # This method seems to be incorrectly defined, it should probably be an instance method without the room argument
+  def participant?(user)
     participants.where(user: user).exists?
+  end
+
+  private
+
+  def add_participants
+    User.all.each do |user|
+      Participant.find_or_create_by(user: user, room: self)
+    end
   end
 end

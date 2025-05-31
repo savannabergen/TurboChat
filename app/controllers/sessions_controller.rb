@@ -7,7 +7,10 @@ class SessionsController < Devise::SessionsController
     if resource
       render json: {
         status: { code: 200, message: 'Logged in successfully.' },
-        data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
+        data: {
+          id: resource.id,
+          email: resource.email
+        }
       }, status: :ok
     else
       render json: {

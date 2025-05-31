@@ -19,20 +19,21 @@ class RoomsController < ApplicationController
     end
   end
 
-  private
-
-  def set_room
-    @room = Room.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Room not found" }, status: :not_found
+  def participants
+    participants = @room.participants.includes(:user)
+    Rails.logger.debug "Participants: #{participants.inspect}"
+    render json: participants.as_json(include: { user: { only: [:id, :email] } }), status: :ok
   end
 
   def room_params
     params.require(:room).permit(:name, :is_private)
   end
 
-  def participants
-    participants = @room.participants
-    render json: participants, status: :ok
+  private
+
+  def set_room
+    @room = Room.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+    render json: { error: "Room not found" }, status: :not_found
   end
 end
