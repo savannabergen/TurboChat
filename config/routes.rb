@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { sessions: 'sessions' }
+  devise_for :users
   get '/', to: 'home#index'
   resources :rooms do
     resources :messages, only: [:index, :create]
     get :participants, on: :member
   end
   resources :users, only: [:index, :show]
-  get '/api/auth/check', to: 'auth#check', defaults: { format: 'json' }
 end
