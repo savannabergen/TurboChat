@@ -1,11 +1,8 @@
 class User < ApplicationRecord
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
-
+  devise :database_authenticatable, :registerable
   scope :all_except, ->(user) { where.not(id: user) }
-
   after_create_commit :notify_clients
   after_commit :attach_default_avatar, on: :create
-
   has_many :messages, dependent: :destroy
   has_one_attached :avatar, dependent: :destroy
 

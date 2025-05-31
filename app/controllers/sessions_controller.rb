@@ -1,36 +1,24 @@
 class SessionsController < Devise::SessionsController
-  respond_to :json
+  def create
+    self.resource = warden.authenticate!(auth_options)
+    sign_in(resource_name, resource)
+    yield resource if block_given?
+    respond_with resource, location: after_sign_in_path_for(resource)
+  end
 
-  def respond_to_on_destroy
-    if current_user
-      render json: {
-        status: 200,
-        message: "Logged out successfully."
-      }, status: :ok
-    else
-      render json: {
-        status: 401,
-        message: "Couldn't find an active session."
-      }, status: :unauthorized
-    end
+  def destroy
+    signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
+    yield if block_given?
+    respond_to_on_destroy
   end
 
   private
 
-    def respond_with(resource, _opts = {})
-      if resource
-        token = request.env['warden-jwt_auth.token']
-        puts "Token: #{token}" # Log the token
-        render json: {
-          status: { code: 200, message: 'Logged in successfully.' },
-          data: {
-            id: resource.id,
-            email: resource.email,
-            token: token
-          }
-        }, status: :ok
-      else
-        render json: { status: { message: "Can't authenticate user.", code: 401 } }, status: :unauthorized
+  def respond_to_on_destroy
+    if request.headers['HTTP_ACCEPT'] =~ /json/
+      head :no_content
+    else
+      redirect_to root_path, notice: 'Signed out!'
     end
   end
 end
