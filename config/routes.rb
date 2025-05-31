@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: {
+    sessions: 'sessions'
+  }
   get '/', to: 'home#index'
   resources :rooms do
     resources :messages, only: [:index, :create]
