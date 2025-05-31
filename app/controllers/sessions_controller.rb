@@ -17,19 +17,20 @@ class SessionsController < Devise::SessionsController
 
   private
 
-  def respond_with(resource, _opts = {})
-    if resource
-      token = request.env['warden-jwt_auth.token']
-      puts "Token: #{token}" # Log the token
-      render json: {
-        status: { code: 200, message: 'Logged in successfully.' },
-        data: {
-          id: resource.id,
-          email: resource.email,
-          token: token
-        }
-      }, status: :ok
-    else
-      render json: { status: { message: "Can't authenticate user.", code: 401 } }, status: :unauthorized
+    def respond_with(resource, _opts = {})
+      if resource
+        token = request.env['warden-jwt_auth.token']
+        puts "Token: #{token}" # Log the token
+        render json: {
+          status: { code: 200, message: 'Logged in successfully.' },
+          data: {
+            id: resource.id,
+            email: resource.email,
+            token: token
+          }
+        }, status: :ok
+      else
+        render json: { status: { message: "Can't authenticate user.", code: 401 } }, status: :unauthorized
+    end
   end
 end
