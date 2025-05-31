@@ -1,13 +1,14 @@
 class MessagesController < ApplicationController
-  before_action :set_message, only: [:show]
+  before_action :set_room
 
   def index
-    messages = Message.all
+    messages = @room.messages.includes(:user)
     render json: messages, status: :ok
   end
 
   def create
-    message = Message.new(message_params)
+    message = @room.messages.new(message_params)
+    message.user = current_user
     if message.save
       render json: message, status: :created
     else
@@ -17,11 +18,13 @@ class MessagesController < ApplicationController
 
   private
 
-  def set_message
-    # Not needed in this case, but can be used if show action is implemented
+  def set_room
+    @room = Room.find(params[:room_id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Room not found" }, status: :not_found
   end
 
   def message_params
-    params.require(:message).permit(:content, :user_id, :room_id)
+    params.require(:message).permit(:content)
   end
 end
