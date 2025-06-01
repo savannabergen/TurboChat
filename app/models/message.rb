@@ -9,6 +9,6 @@ class Message < ApplicationRecord
   end
 
   def confirm_participant
-  true
+    true
   end
 end

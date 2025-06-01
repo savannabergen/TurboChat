@@ -21,6 +21,10 @@ class MessagesController < ApplicationController
 
   def set_room
     @room = Room.find(params[:room_id])
+    # Ensure current user is a participant in the room
+    unless @room.participants.include?(current_user)
+      render json: { error: "You are not a participant in this room" }, status: :forbidden
+    end
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Room not found" }, status: :not_found
   end
