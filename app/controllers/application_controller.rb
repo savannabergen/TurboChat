@@ -1,7 +1,7 @@
 require_relative '../../lib/json_web_token'
 
 class ApplicationController < ActionController::API
-  before_action :authenticate_request
+  before_action :authenticate_request, unless: :devise_controller?
 
   private
 
