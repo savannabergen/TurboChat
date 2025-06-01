@@ -12,6 +12,7 @@ require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
 # require "rails/test_unit/railtie"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -21,12 +22,10 @@ module TurboChat
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins %r{https://[a-zA-Z0-9-]+\.savannagrace\.dev}, 'http://localhost:3000'
-        resource "*",
-          headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options, :head],
-          credentials: true,
-          expose: ['Authorization']
+        resource "*", headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head], credentials: true, expose: ['Authorization']
       end
     end
+
+    config.action_cable.allowed_request_origins = %r{https://[a-zA-Z0-9-]+\.savannagrace\.dev}, 'http://localhost:3000'
   end
 end

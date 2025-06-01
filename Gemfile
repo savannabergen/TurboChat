@@ -13,6 +13,7 @@ gem "sqlite3"
 gem "devise"
 gem "redis"
 gem "artii"
+gem "turbo-rails"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

@@ -10,6 +10,7 @@ class MessagesController < ApplicationController
     message = @room.messages.new(message_params)
     message.user = current_user
     if message.save
+      Turbo::StreamsChannel.broadcast_append_to @room, target: "messages", partial: ApplicationController.render(partial: "messages/message", locals: { message: message }, formats: [:json])
       render json: message, status: :created
     else
       render json: { errors: message.errors }, status: :unprocessable_entity
