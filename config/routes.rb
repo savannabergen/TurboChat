@@ -8,13 +8,13 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
 
-  scope :api, defaults: { format: :json } do
-    resources :rooms do
+  constraints format: :json do
+    resources :rooms, path: '/api/rooms' do
       member do
         get :participants
       end
-      resources :messages, only: [:index, :create]
+      resources :messages, path: '/api/rooms/:room_id/messages', only: [:index, :create]
     end
-    resources :users, only: [:index]
+    resources :users, path: '/api/users', only: [:index]
   end
 end
