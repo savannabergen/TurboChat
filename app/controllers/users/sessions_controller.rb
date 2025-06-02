@@ -1,7 +1,7 @@
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
   private
-   def respond_with(current_user, _opts = {})
+  def respond_with(current_user, _opts = {})
     render json: {
       status: {
         code: 200, message: 'Logged in successfully.',
@@ -9,7 +9,6 @@ class Users::SessionsController < Devise::SessionsController
       }
     }, status: :ok
   end
-
   def respond_to_on_destroy
     if request.headers['Authorization'].present?
       jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, Rails.application.credentials.devise_jwt_secret_key!).first
@@ -28,4 +27,18 @@ class Users::SessionsController < Devise::SessionsController
       }, status: :unauthorized
     end
   end
+
+  def respond_with(current_user, _opts = {})
+  token = request.env['warden-jwt_auth.token']
+  render json: {
+    status: {
+      code: 200,
+      message: 'Logged in successfully.',
+      token: token,
+      data: {
+        user: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      }
+    }
+  }, status: :ok
+end
 end

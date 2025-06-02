@@ -6,13 +6,11 @@ Rails.application.routes.draw do
              path_names: { sign_in: 'login', sign_out: 'logout', registration: 'signup' },
              controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }
 
-  namespace :api do
-    resources :rooms do
-      member do
-        get :participants
-      end
-      resources :messages, only: [:index, :create]
+   resources :rooms do
+    member do
+      get :participants
     end
-    resources :users, only: [:index]
+    resources :messages, only: [:index, :create]
   end
+  resources :users, only: [:index]
 end
