@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  root to: 'home#index'
-
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
     sign_out: 'logout',
@@ -10,12 +8,13 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
 
-  resources :rooms do
-    member do
-      get :participants
+  scope :api, defaults: { format: :json } do
+    resources :rooms do
+      member do
+        get :participants
+      end
+      resources :messages, only: [:index, :create]
     end
-    resources :messages, only: [:index, :create]
+    resources :users, only: [:index]
   end
-
-  resources :users, only: [:index]
 end
