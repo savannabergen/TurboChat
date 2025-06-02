@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
 
   def index
     messages = @room.messages.includes(:user)
-    render json: messages, status: :ok
+    render json: { status: { code: 200, message: 'Messages retrieved successfully.' }, data: messages }, status: :ok
   end
 
   def create
@@ -12,9 +12,9 @@ class MessagesController < ApplicationController
     message.user = current_user
     if message.save
       Turbo::StreamsChannel.broadcast_append_to @room, target: "messages", partial: ApplicationController.render(partial: "messages/message", locals: { message: message }, formats: [:json])
-      render json: message, status: :created
+      render json: { status: { code: 201, message: 'Message created successfully.' }, data: message }, status: :created
     else
-      render json: { errors: message.errors }, status: :unprocessable_entity
+      render json: { status: { code: 422, message: 'Message could not be created.' }, errors: message.errors }, status: :unprocessable_entity
     end
   end
 
@@ -22,8 +22,8 @@ class MessagesController < ApplicationController
 
   def set_room
     @room = Room.find(params[:room_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Room not found" }, status: :not_found
+    rescue ActiveRecord::RecordNotFound
+    render json: { status: { code: 404, message: 'Room not found.' } }, status: :not_found
   end
 
   def message_params

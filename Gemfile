@@ -7,10 +7,11 @@ gem "jbuilder"
 gem "bootsnap", require: false
 gem "faker"
 gem "rack-cors"
-gem "jwt"
 gem "omniauth-google-oauth2"
 gem "sqlite3"
-gem "devise"
+gem 'devise'
+gem 'devise-jwt'
+gem 'jsonapi-serializer'
 gem "redis"
 gem "artii"
 gem "turbo-rails"

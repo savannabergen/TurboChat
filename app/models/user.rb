@@ -1,6 +1,6 @@
 class User < ApplicationRecord
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
-  scope :all_except, ->(user) { where.not(id: user) }
+  include Devise::JWT::RevocationStrategies::JTIMatcher
+  devise :database_authenticatable, :registerable, :recoverable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
   after_create_commit :notify_clients
   after_commit :attach_default_avatar, on: :create
   has_many :messages, dependent: :destroy

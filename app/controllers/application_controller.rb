@@ -1,14 +1,9 @@
-require_relative '../../lib/json_web_token'
-
 class ApplicationController < ActionController::API
-  before_action :authenticate_request, unless: :devise_controller?
-
-  private
-
-  def authenticate_request
-    token = request.headers['Authorization'].to_s.split(' ').last
-    decoded_token = JsonWebToken.decode(token)
-    @current_user = User.find(decoded_token['user_id']) if decoded_token
-    render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
+  include RackSessionsFix
+  before_action :configure_permitted_parameters, if: :devise_controller?
+  protected
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[name avatar])
+    devise_parameter_sanitizer.permit(:account_update, keys: %i[name avatar])
   end
 end
