@@ -24,4 +24,15 @@ class UsersController < ApplicationController
     rescue ActiveRecord::RecordNotFound
     render json: { status: { code: 404, message: 'User not found.' } }, status: :not_found
   end
+
+  def respond_with(current_user, _opts = {})
+  token = request.env['warden-jwt_auth.token']
+  render json: {
+    status: { code: 200, message: 'Logged in successfully.' },
+    data: {
+      user: UserSerializer.new(current_user).serializable_hash[:data][:attributes],
+      token: token
+    }
+  }, status: :ok
+  end
 end
