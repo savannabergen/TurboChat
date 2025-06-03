@@ -15,7 +15,6 @@ class RoomsController < ApplicationController
   def create
     room = Room.new(room_params)
     if room.save
-      ActionCable.server.broadcast "rooms", { room: RoomSerializer.new(room).serializable_hash[:data] }
       render json: { status: { code: 201, message: 'Room created successfully.' }, data: RoomSerializer.new(room).serializable_hash[:data] }, status: :created
     else
       render json: { status: { code: 422, message: 'Room could not be created.' }, errors: room.errors }, status: :unprocessable_entity
@@ -23,7 +22,7 @@ class RoomsController < ApplicationController
   end
 
   def participants
-    render json: { participants: @room.participants }
+    render json: ParticipantSerializer.new(@room.participants).serializable_hash[:data]
   end
 
   private

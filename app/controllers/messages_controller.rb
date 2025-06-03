@@ -7,11 +7,10 @@ class MessagesController < ApplicationController
     render json: MessageSerializer.new(messages).serializable_hash[:data], status: :ok
   end
 
-  def create
+   def create
     message = @room.messages.new(message_params)
     message.user = current_user
     if message.save
-      ActionCable.server.broadcast "room_#{@room.id}", { message: MessageSerializer.new(message).serializable_hash[:data] }
       render json: { status: { code: 201, message: 'Message created successfully.' }, data: MessageSerializer.new(message).serializable_hash[:data] }, status: :created
     else
       render json: { status: { code: 422, message: 'Message could not be created.' }, errors: message.errors }, status: :unprocessable_entity

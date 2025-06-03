@@ -5,7 +5,7 @@ class Message < ApplicationRecord
   after_create_commit :notify_clients
 
   def notify_clients
-    $redis.publish("room:#{room.id}", { message: self }.to_json)
+    ActionCable.server.broadcast "room_#{room.id}", { message: self }
   end
 
   def confirm_participant

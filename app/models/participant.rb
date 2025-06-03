@@ -7,6 +7,6 @@ class Participant < ApplicationRecord
   private
 
   def notify_clients
-    $redis.publish("room:#{room.id}:participants", { participant: self }.to_json)
+    ActionCable.server.broadcast "room_#{room.id}:participants", { participant: self }
   end
 end
